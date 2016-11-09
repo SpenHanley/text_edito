@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-import tkinter as tk
-import sys
+
 import datetime
-import base64
-import zlib
-from tkinter import filedialog, messagebox
+import sys
+import tkinter as tk
+from tkinter import filedialog, messagebox, scrolledtext
 
+__author__ = 'Spen Hanley'
 
-# TODO: Make the frame match the root node when the window is resized
 # TODO: Make the root title update when it is changed
 # TODO: Implement the actions for the context menu aswell as the remaining menu items
 # TODO: Implement either a library or a custom print dialog as no print dialog is included
@@ -16,8 +15,6 @@ from tkinter import filedialog, messagebox
 
 class ShowGUI:
     def __init__(self):
-        self.hide_icon = zlib.decompress(
-            base64.b64decode('eJxjYGAEQgEBBiDJwZDBysAgxsDAoAHEQCEGBQaIOAg4sDIgACMUj4JRMApGwQgF/ykEAFXxQRc='))
         self.root = self.config_root()
         self.frame = self.config_frame(self.root)
         self.dir = tk.END
@@ -35,6 +32,10 @@ class ShowGUI:
         rt.wm_iconbitmap('image/notepad_icon.ico')
         rt.title = "PyNotepad"
         rt.config(menu=self.make_menu_bar(rt))
+        rt.update()
+        rt.minsize(rt.winfo_width(), rt.winfo_height())
+        tk.Grid.rowconfigure(rt, 0, weight=1)
+        tk.Grid.columnconfigure(rt, 0, weight=1)
         return rt
 
     def trigger_find(self, what, dir):
@@ -54,7 +55,9 @@ class ShowGUI:
     @staticmethod
     def config_frame(root):
         fr = tk.Frame(root)
-        fr.grid(row=0, column=0)
+        fr.grid(row=0, column=0, sticky='nsew')
+        tk.Grid.columnconfigure(fr, 0, weight=1)
+        tk.Grid.rowconfigure(fr, 0, weight=1)
         return fr
 
     def bind_all(self):
@@ -68,6 +71,8 @@ class ShowGUI:
 
     def popup(self, event):
         self.cont_menu.post(event.x_root, event.y_root)
+
+    # Commands
 
     def save_as_file(self, event):
         if self.file is None:
@@ -112,7 +117,7 @@ class ShowGUI:
         x_scroll = tk.Scrollbar(self.frame, orient=tk.HORIZONTAL)
         x_scroll.grid(row=1, column=0, sticky="nsew")
         t = tk.Text(self.frame, wrap="none", yscrollcommand=y_scroll.set, xscrollcommand=x_scroll.set, undo=True)
-        t.grid(row=0, column=0)
+        t.grid(row=0, column=0, sticky='nsew')
         y_scroll.config(command=t.yview)
         x_scroll.config(command=t.xview)
         return t
